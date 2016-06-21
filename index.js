@@ -10,7 +10,7 @@ var nodeMailerAdapter = require('./nodeMailerAdapter');
 
 //Using Config File for localhost variables
 //var process = require('./config');
-
+//
 // Declares Database URI
 var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI;
 if (!databaseUri) {
@@ -78,7 +78,7 @@ app.use(mountPath, api);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('Make sure to star the parse-server repo on GitHub!');
+  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
