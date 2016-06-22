@@ -9,8 +9,13 @@ var S3Adapter = require('parse-server').S3Adapter;
 var nodeMailerAdapter = require('./nodeMailerAdapter');
 
 //Using Config File for localhost variables
+<<<<<<< HEAD
 var process = require('./config');
 
+=======
+//var process = require('./config');
+//
+>>>>>>> 4a363182595f9d2e29f24ae2b18276f56f865d81
 // Declares Database URI
 var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI;
 if (!databaseUri) {
