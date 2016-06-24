@@ -1,17 +1,13 @@
-// Example express application adding the parse-server module to expose Parse
-// compatible API routes.
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
-//Using S3Adapter for File Storage and nodeMailerAdapter to send Mail
-var S3Adapter = require('parse-server').S3Adapter;
-var nodeMailerAdapter = require('./nodeMailerAdapter');
 
-//Using Config File for localhost variables
-//var process = require('./config');
+//Using Config File for localhost environment variables
+//process.env = require('./config');
+
 // Declares Database URI
-var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI;
+var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI || process.env.MONGODB_URI;
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
@@ -32,6 +28,8 @@ var apiConfig = {
 };
 
 if (process.env.FILE_KEY){
+  //Using S3Adapter for File Storage
+  var S3Adapter = require('parse-server').S3Adapter;
   apiConfig.fileKey = process.env.FILE_KEY;
   apiConfig.filesAdapter = new S3Adapter(
     process.env.AWS_ACCESS_KEY_ID,
@@ -40,19 +38,13 @@ if (process.env.FILE_KEY){
     {directAccess: true, bucketPrefix: process.env.BUCKET_PREFIX}
   );
 }
-
 if (process.env.VERIFY_EMAILS){
-  // Defaults Email Verification to False,
-  // in case Heroku variable is set to true,
-  // it transforms it to boolean, because Heroku only accepts strings.
-  apiConfig.verifyUserEmails = false;
-  if (process.env.VERIFY_EMAILS == "true"){
-    apiConfig.verifyUserEmails = true;
-  }
+  //Sets Email Verification for user account authentication
+  apiConfig.verifyUserEmails = ((process.env.VERIFY_EMAILS == "true") ? true : false);
 }
 if (process.env.MAIL_EMAIL) {
-  // Uses a nodemailer custom adapter, instead of the parse-server default
-  // Needs email and password from the sender
+  //Uses a nodemailer custom adapter for mail sending
+  var nodeMailerAdapter = require('./nodeMailerAdapter');
   apiConfig.emailAdapter = nodeMailerAdapter({
     email: process.env.MAIL_EMAIL || 'email@provider.com',
     password:process.env.MAIL_PASSWORD || 'myPassword',
@@ -60,12 +52,52 @@ if (process.env.MAIL_EMAIL) {
   });
 }
 if (process.env.INVALID_LINK_URL) {
+  //Uses custom parse links for email verification pages
   apiConfig.customPages = {
     invalidLink: process.env.INVALID_LINK_URL,
     verifyEmailSuccess: process.env.VERIFY_EMAIL_URL,
     choosePassword: process.env.CHOOSE_PASSWORD_URL,
     passwordResetSuccess: process.env.PASSWORD_RESET_SUCCESS_URL
   };
+}
+if (process.env.PROD_PUSH_CERT_PATH){
+  //Using Parse Push Default Adapter
+  apiConfig.push = {
+    ios: [
+      {
+        pfx: process.env.DEV_PUSH_CERT_PATH, // Dev PFX or P12
+        bundleId: process.env.DEV_PUSH_CERT_BUNDLE,
+        production: false // Dev
+      },
+      {
+        pfx: process.env.PROD_PUSH_CERT_PATH, // Prod PFX or P12
+        bundleId: process.env.PROD_PUSH_CERT_BUNDLE,
+        production: true // Prod
+      }
+    ]
+  };
+}
+if (process.env.SNS_ACCESS_KEY){
+  //Using Amazon SNS Push Service Adapter
+  var pushConfig =  {
+    pushTypes : {
+      android: {
+        ARN: process.env.SNS_PUSH_ANDROID_ARN
+      },
+      ios: {
+        ARN: process.env.SNS_PUSH_IOS_ARN,
+        production: ((process.env.SNS_PROD_ENV == "true") ? true : false),
+        bundleId: process.env.SNS_PUSH_CERT_BUNDLE
+      }
+    },
+    accessKey: process.env.SNS_ACCESS_KEY,
+    secretKey: process.env.SNS_SECRET_ACCESS_KEY,
+    region: process.env.SNS_PUSH_REGION
+  };
+  var SNSPushAdapter = require('parse-server-sns-adapter');
+  var snsPushAdapter = new SNSPushAdapter(pushConfig);
+  pushConfig['adapter'] = snsPushAdapter;
+  apiConfig.push = pushConfig;
 }
 
 //Custom Parse Server Options
