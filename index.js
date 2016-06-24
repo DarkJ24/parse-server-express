@@ -63,6 +63,10 @@ if (process.env.INVALID_LINK_URL) {
 if (process.env.PROD_PUSH_CERT_PATH){
   //Using Parse Push Default Adapter
   apiConfig.push = {
+    android: {
+      senderId: process.env.PUSH_GCM_ID,
+      apiKey: process.env.PUSH_GCM_API_KEY
+    },
     ios: [
       {
         pfx: process.env.DEV_PUSH_CERT_PATH, // Dev PFX or P12
