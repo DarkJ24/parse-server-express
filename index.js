@@ -59,14 +59,17 @@ if (process.env.INVALID_LINK_URL) {
     passwordResetSuccess: process.env.PASSWORD_RESET_SUCCESS_URL
   };
 }
+var pushConfig = {}; //Using Parse Push Default Adapter (optional)
+if (process.env.PUSH_GCM_ID){
+  //Using Android Pushes
+  pushConfig.android = {
+    senderId: process.env.PUSH_GCM_ID,
+    apiKey: process.env.PUSH_GCM_API_KEY
+  };
+}
 if (process.env.PROD_PUSH_CERT_PATH){
-  //Using Parse Push Default Adapter
-  apiConfig.push = {
-    android: {
-      senderId: process.env.PUSH_GCM_ID,
-      apiKey: process.env.PUSH_GCM_API_KEY
-    },
-    ios: [
+    //Using iOS Pushes
+    pushConfig.ios = [
       {
         pfx: process.env.DEV_PUSH_CERT_PATH, // Dev PFX or P12
         bundleId: process.env.DEV_PUSH_CERT_BUNDLE,
@@ -77,12 +80,11 @@ if (process.env.PROD_PUSH_CERT_PATH){
         bundleId: process.env.PROD_PUSH_CERT_BUNDLE,  
         production: true // Prod
       }
-    ]
-  }
+    ];
 }
 if (process.env.SNS_ACCESS_KEY){
   //Using Amazon SNS Push Service Adapter
-  var pushConfig =  { 
+  pushConfig =  { 
     pushTypes : { 
       android: {
         ARN: process.env.SNS_PUSH_ANDROID_ARN
@@ -100,8 +102,13 @@ if (process.env.SNS_ACCESS_KEY){
   var SNSPushAdapter = require('parse-server-sns-adapter');
   var snsPushAdapter = new SNSPushAdapter(pushConfig);
   pushConfig['adapter'] = snsPushAdapter;
+}
+if (process.env.SNS_ACCESS_KEY || process.env.PUSH_GCM_ID || process.env.PROD_PUSH_CERT_PATH){
+  //If any push configuration used, add to the Api Configuration
   apiConfig.push = pushConfig;
 }
+
+console.log(apiConfig);
 
 //Custom Parse Server Options
 var api = new ParseServer(apiConfig);
@@ -122,7 +129,7 @@ app.get('/', function(req, res) {
 });
 
 //Starts Parse Server on Port 1337 or one set by Heroku Variables
-var port = process.env.PORT || 1337;
+var port = process.env.PORT || 4000;
 var httpServer = require('http').createServer(app);
 httpServer.listen(port, function() {
     console.log('parse-server-example running on port ' + port + '.');
