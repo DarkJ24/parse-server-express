@@ -2,6 +2,7 @@ var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
+
 //Using Config File for localhost environment variables
 //process.env = require('./config');
 
@@ -77,21 +78,21 @@ if (process.env.PROD_PUSH_CERT_PATH){
       },
       {
         pfx: new Buffer(process.env.PROD_PUSH_CERT_PATH, 'hex'), // Prod PFX or P12
-        bundleId: process.env.PROD_PUSH_CERT_BUNDLE,  
+        bundleId: process.env.PROD_PUSH_CERT_BUNDLE,
         production: true // Prod
       }
     ];
 }
 if (process.env.SNS_ACCESS_KEY){
   //Using Amazon SNS Push Service Adapter
-  pushConfig =  { 
-    pushTypes : { 
+  pushConfig =  {
+    pushTypes : {
       android: {
         ARN: process.env.SNS_PUSH_ANDROID_ARN
       },
       ios: {
-        ARN: process.env.SNS_PUSH_IOS_ARN, 
-        production: ((process.env.SNS_PROD_ENV == "true") ? true : false), 
+        ARN: process.env.SNS_PUSH_IOS_ARN,
+        production: ((process.env.SNS_PROD_ENV == "true") ? true : false),
         bundleId: process.env.SNS_PUSH_CERT_BUNDLE
       }
     },
