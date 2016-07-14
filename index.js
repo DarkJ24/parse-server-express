@@ -21,6 +21,7 @@ var apiConfig = {
   masterKey: process.env.MASTER_KEY,
   javascriptKey: process.env.JS_KEY,
   restAPIKEY: process.env.RESTAPI_KEY,
+  clientKey: process.env.CLIENT_KEY,
   publicServerURL: process.env.SERVER_URL,
   liveQuery: {
     classNames: [] // List of classes to support for query subscriptions
@@ -126,10 +127,10 @@ app.use(mountPath, api);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+  res.status(200).send('I am Parse Server, running fine!');
 });
 
-//Starts Parse Server on Port 1337 or one set by Heroku Variables
+//Starts Parse Server on Port 4000 or one set by Heroku Variables
 var port = process.env.PORT || 4000;
 var httpServer = require('http').createServer(app);
 httpServer.listen(port, function() {
