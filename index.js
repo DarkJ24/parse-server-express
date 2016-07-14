@@ -71,12 +71,12 @@ if (process.env.PROD_PUSH_CERT_PATH){
     //Using iOS Pushes
     pushConfig.ios = [
       {
-        pfx: process.env.DEV_PUSH_CERT_PATH, // Dev PFX or P12
+        pfx: new Buffer(process.env.DEV_PUSH_CERT_PATH, 'hex'), // Dev PFX or P12
         bundleId: process.env.DEV_PUSH_CERT_BUNDLE,
         production: false // Dev
       },
       {
-        pfx: process.env.PROD_PUSH_CERT_PATH, // Prod PFX or P12
+        pfx: new Buffer(process.env.PROD_PUSH_CERT_PATH, 'hex'), // Prod PFX or P12
         bundleId: process.env.PROD_PUSH_CERT_BUNDLE,  
         production: true // Prod
       }
