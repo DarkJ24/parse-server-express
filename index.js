@@ -4,7 +4,7 @@ var path = require('path');
 
 
 //Using Config File for localhost environment variables
-//process.env = require('./config');
+process.env = require('./config');
 
 // Declares Database URI
 var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI || process.env.MONGODB_URI;
@@ -69,7 +69,7 @@ if (process.env.PUSH_GCM_ID){
     apiKey: process.env.PUSH_GCM_API_KEY
   };
 }
-if (process.env.PROD_PUSH_CERT_PATH){
+if (process.env.PROD_PUSH_CERT_PATH || process.env.DEV_PUSH_CERT_HEX){
     //Using iOS Pushes
     pushConfig.ios = [
       {
@@ -105,7 +105,7 @@ if (process.env.SNS_ACCESS_KEY){
   var snsPushAdapter = new SNSPushAdapter(pushConfig);
   pushConfig['adapter'] = snsPushAdapter;
 }
-if (process.env.SNS_ACCESS_KEY || process.env.PUSH_GCM_ID || process.env.PROD_PUSH_CERT_PATH){
+if (process.env.SNS_ACCESS_KEY || process.env.PUSH_GCM_ID || process.env.PROD_PUSH_CERT_PATH || process.env.PROD_PUSH_CERT_HEX){
   //If any push configuration used, add to the Api Configuration
   apiConfig.push = pushConfig;
 }
