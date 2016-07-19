@@ -4,10 +4,12 @@ var path = require('path');
 
 
 //Using Config File for localhost environment variables
-process.env = require('./config');
+if (!process.env.SERVER_URL) {
+  process.env = require('./config');
+}
 
 // Declares Database URI
-var databaseUri = process.env.DATABASE_URI || process.env.MONGOLAB_URI || process.env.MONGODB_URI;
+var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
