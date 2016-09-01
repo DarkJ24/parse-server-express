@@ -112,8 +112,6 @@ if (process.env.SNS_ACCESS_KEY || process.env.PUSH_GCM_ID || process.env.PROD_PU
   apiConfig.push = pushConfig;
 }
 
-console.log(apiConfig);
-
 //Custom Parse Server Options
 var api = new ParseServer(apiConfig);
 
