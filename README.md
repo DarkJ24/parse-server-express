@@ -62,7 +62,7 @@ A detailed tutorial is available here:
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 1. Setup a MongoDB server.  You have a few options:
   1. Create a Google Compute Engine virtual machine with [MongoDB pre-installed](https://cloud.google.com/launcher/?q=mongodb).
-  1. Use [MongoLab](https://mongolab.com/google/) to create a free MongoDB deployment on Google Cloud Platform.
+  1. Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud Platform (only US-central).
 1. Modify `app.yaml` to update your environment variables.
 1. Delete `Dockerfile`
 1. Deploy it with `gcloud preview app deploy`
@@ -84,6 +84,22 @@ A detailed tutorial is available here:
 * Setup MongoDB connection string: `scalingo env-set DATABASE_URI='$SCALINGO_MONGO_URL'`
 * By default it will use a path of /parse for the API routes. To change this, or use older client SDKs, run `scalingo env-set PARSE_MOUNT=/1`
 * Deploy it with: `git push scalingo master`
+
+### Getting Started With OpenShift Online (Next Gen)
+
+1. Register for a free [OpenShift Online (Next Gen) account](http://www.openshift.com/devpreview/register.html)
+1. Create a project in the [OpenShift Online Console](https://console.preview.openshift.com/console/).
+1. Install the [OpenShift CLI](https://docs.openshift.com/online/getting_started/beyond_the_basics.html#btb-installing-the-openshift-cli).
+1. Add the Parse Server template to your project: `oc create -f https://raw.githubusercontent.com/ParsePlatform/parse-server-example/master/openshift.json`
+1. Deploy Parse Server from the web console
+  1. Open your project in the [OpenShift Online Console](https://console.preview.openshift.com/console/):
+  1. Click **Add to Project** from the top navigation
+  1. Scroll down and select **NodeJS > Parse Server**
+  1. (Optionally) Update the Parse Server settings (parameters)
+  1. Click **Create**
+
+A detailed tutorial is available here:
+[Running Parse Server on OpenShift Online (Next Gen)](https://blog.openshift.com/parse-server/)
 
 # Using it
 
@@ -146,3 +162,5 @@ Parse.initializeWithConfiguration(ParseClientConfiguration(block: { (configurati
 }))
 ```
 You can change the server URL in all of the open-source SDKs, but we're releasing new builds which provide initialization time configuration of this property.
+
+As of April 5, 2017, Parse, LLC has transferred this code to the parse-community organization, and will no longer be contributing to or distributing this code.
